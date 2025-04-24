@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="shopping.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="shopping.html" class="logo"><img src="logo.png" alt=""></a>
+        <div class="nav-links">
+            <a href="shopping.html">Home</a>
+            <a href="#products">Products</a>
+            <a href="#category">Categories</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="nav-icons">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-user"></i>
+            <a href="panierPage.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count-nav">0</span>
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Hero  -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="collection-tag">NEW SPRING COLLECTION 2025</span>
+            <h1>ARRIVALS SALES</h1>
+            <a href="#products" class="btn7">SHOP NOW</a>
+        </div>
+    </section>
+
+    <!--  Categories -->
+    <section class="featured-categories" id="category">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="categories-grid">
+            <div class="category-card" data-category="clothing">
+                <img src="category1.png" alt="Clothing">
+                <div class="category-content">
+                    <h3>Clothing</h3>
+                </div>
+            </div>
+            <div class="category-card" data-category="makeup">
+                <img src="category3.png" alt="Makeup">
+                <div class="category-content">
+                    <h3>Makeup</h3>
+                </div>
+            </div>
+            <div class="category-card" data-category="accessories">
+                <img src="category2.png" alt="Accessories">
+                <div class="category-content">
+                    <h3>Accessories</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter -->
+    <section class="filter-section">
+        <h2 class="section-title">Filter Products</h2>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Products</button>
+            <button class="filter-btn" data-filter="clothing">Clothing</button>
+            <button class="filter-btn" data-filter="makeup">Makeup</button>
+            <button class="filter-btn" data-filter="accessories">Accessories</button>
+        </div>
+    </section>
+
+    <!-- Products-->
+    <section class="products-section" id="products">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="products-grid" id="products-grid">
+            
+        </div>
+    </section>
+
+    <!-- Product preview-->
+    <div class="product-modal" id="product-modal">
+        <div class="modal-content">
+            <button class="modal-close"><i class="fas fa-times"></i></button>
+            <div class="product-detail" id="product-detail">
+          
+            </div>
+        </div>
+    </div>
+
+  
+    <section class="features">
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-truck"></i>
+                <h3>Free Shipping</h3>
+                <p>On orders over $50</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-undo"></i>
+                <h3>Easy Returns</h3>
+                <p>30-day return policy</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-lock"></i>
+                <h3>Secure Payment</h3>
+                <p>100% secure checkout</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-headset"></i>
+                <h3>24/7 Support</h3>
+                <p>Dedicated support</p>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="newsletter">
+        <div class="newsletter-content">
+            <h2 class="section-title">Subscribe to Our Newsletter</h2>
+            <p>Get updates about new products and special offers</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email">
+                <button type="submit" class="btn">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Product added to cart!</span>
+    </div>
+
+ 
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Shop</h3>
+                <ul>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Best Sellers</a></li>
+                    <li><a href="#">Sale</a></li>
+                    <li><a href="#">Collections</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Follow Us</h3>
+                <ul>
+                    <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                    <li><a href="#"><i class="fab fa-pinterest"></i> Pinterest</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ShopNow. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="shopping.js"></script>
+</body>
+</html>

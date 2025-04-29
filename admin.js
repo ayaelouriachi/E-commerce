@@ -6,7 +6,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "clothing",
       price: 29.99,
       description: "Soft and comfortable premium cotton t-shirt with a modern fit. Available in multiple colors and sizes.",
-      image: "images/shirt.png"
+      image: "images/shirt.png",
+      stock: 20
     },
     {
       id: 2,
@@ -14,7 +15,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "clothing",
       price: 59.99,
       description: "Classic denim jeans with a straight fit design. Durable and versatile for everyday wear.",
-      image: "images/jeans.png"
+      image: "images/jeans.png",
+      stock: 15
     },
     {
       id: 3,
@@ -22,7 +24,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "makeup",
       price: 24.99,
       description: "Buildable coverage foundation with a natural finish, available in 12 shades.",
-      image: "images/Fon.png"
+      image: "images/Fon.png",
+      stock: 10
     },
     {
       id: 4,
@@ -30,7 +33,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "accessories",
       price: 19.99,
       description: "Durable and stylish smartphone case made from premium materials to protect your device.",
-      image: "images/phone.png"
+      image: "images/phone.png",
+      stock: 5
     },
     {
       id: 5,
@@ -38,7 +42,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "clothing",
       price: 49.99,
       description: "Lightweight and breathable summer dress with a floral pattern. Perfect for warm weather.",
-      image: "images/Robe.png"
+      image: "images/Robe.png",
+      stock: 8
     },
     {
       id: 6,
@@ -46,7 +51,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "makeup",
       price: 34.99,
       description: "Set of 5 long‑wear matte lipsticks in a range of bold shades.",
-      image: "images/Lip.png"
+      image: "images/Lip.png",
+      stock: 12
     },
     {
       id: 7,
@@ -54,7 +60,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "accessories",
       price: 39.99,
       description: "Genuine leather wallet with multiple card slots and a sleek design.",
-      image: "images/Wal.png"
+      image: "images/Wal.png",
+      stock: 7
     },
     {
       id: 8,
@@ -62,7 +69,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "makeup",
       price: 29.99,
       description: "12‑pan eyeshadow palette with a mix of mattes and shimmers for endless looks.",
-      image: "images/eye.png"
+      image: "images/eye.png",
+      stock: 9
     },
     {
       id: 9,
@@ -70,7 +78,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "clothing",
       price: 149.99,
       description: "Warm and windproof winter jacket with a stylish design and multiple pockets.",
-      image: "images/jacket.png"
+      image: "images/jacket.png",
+      stock: 6
     },
     {
       id: 10,
@@ -78,12 +87,22 @@ let products = JSON.parse(localStorage.getItem('products')) || [
       category: "accessories",
       price: 89.99,
       description: "Designer sunglasses with UV protection and polarized lenses for exceptional clarity.",
-      image: "images/Sun.png"
+      image: "images/Sun.png",
+      stock: 4
     }
   ];
   
   // If products don't exist in localStorage, initialize them
   if (!localStorage.getItem('products')) {
+    // S'assurer que les produits par défaut ont tous les champs requis
+    products.forEach(product => {
+      if (!product.details) {
+        product.details = "Detailed information about this product will be available soon.";
+      }
+      if (product.stock === undefined) {
+        product.stock = 20; // Valeur par défaut pour le stock
+      }
+    });
     localStorage.setItem('products', JSON.stringify(products));
   }
   
@@ -202,6 +221,7 @@ let products = JSON.parse(localStorage.getItem('products')) || [
     
     // Generate HTML for each product
     filteredProducts.forEach(product => {
+      const stockClass = product.stock <= 5 ? 'low-stock' : '';
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>
@@ -210,6 +230,7 @@ let products = JSON.parse(localStorage.getItem('products')) || [
         <td>${product.title}</td>
         <td>${product.category}</td>
         <td>$${product.price.toFixed(2)}</td>
+         <td class="${stockClass}">${product.stock}</td>
         <td>
           <button class="btn-icon edit-product" data-id="${product.id}">
             <i class="fas fa-edit"></i>
@@ -337,6 +358,7 @@ let products = JSON.parse(localStorage.getItem('products')) || [
     document.getElementById('product-description').value = product.description;
     document.getElementById('product-details').value = product.details || '';
     document.getElementById('product-image').value = product.image;
+    document.getElementById('product-stock').value = product.stock || 0; 
     
     // Show image preview
     const imagePreview = document.getElementById('image-preview');
@@ -365,8 +387,9 @@ let products = JSON.parse(localStorage.getItem('products')) || [
     const description = document.getElementById('product-description').value;
     const details = document.getElementById('product-details').value;
     const image = document.getElementById('product-image').value;
+    const stock = parseInt(document.getElementById('product-stock').value) || 0;
     
-    if (!title || !category || isNaN(price) || price <= 0 || !description || !image) {
+    if (!title || !category || isNaN(price) || price <= 0 || !description || !image || isNaN(stock) || stock < 0) {
       showToast('Please fill all fields correctly', 'error');
       return;
     }
@@ -382,7 +405,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
           price,
           description,
           details,
-          image
+          image,
+          stock
         };
         
         // Update localStorage
@@ -405,7 +429,8 @@ let products = JSON.parse(localStorage.getItem('products')) || [
         price,
         description,
         details,
-        image
+        image,
+        stock
       };
       
       products.push(newProduct);

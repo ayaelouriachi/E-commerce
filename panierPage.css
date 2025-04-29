@@ -181,3 +181,154 @@
     color: #777;
     margin-bottom: 30px;
 }
+
+/* Styles pour les avertissements de stock */
+.stock-warning {
+    background-color: #fff9f9;
+}
+
+.stock-warning-message {
+    color: #e94560;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* Style pour le message d'erreur de stock */
+.stock-error {
+    background-color: #fff9f9;
+    border-left: 4px solid #e94560;
+    color: #e94560;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    display: none;
+    font-weight: 500;
+}
+
+.stock-error.visible {
+    display: block;
+}
+
+/* Styles pour les boutons désactivés */
+.quantity-btn:disabled {
+    background-color: #f0f0f0;
+    color: #aaa;
+    cursor: not-allowed;
+    border-color: #ddd;
+}
+
+.checkout-btn:disabled {
+    background-color: #f0f0f0;
+    color: #777;
+    cursor: not-allowed;
+}
+
+/* Toast notifications */
+#toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #4caf50;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(100px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+#toast.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+#toast.error {
+    background-color: #e94560;
+}
+
+/* Style pour le message de paiement réussi */
+.checkout-success {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.checkout-success i {
+    font-size: 5rem;
+    color: #4caf50;
+    margin-bottom: 30px;
+}
+
+.checkout-success h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.checkout-success p {
+    color: #555;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+.checkout-success .btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #e94560;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.checkout-success .btn:hover {
+    background-color: #d63d57;
+}
+
+/* Responsive design pour la table du panier */
+@media (max-width: 768px) {
+    .cart-table thead {
+        display: none;
+    }
+    
+    .cart-table, .cart-table tbody, .cart-table tr, .cart-table td {
+        display: block;
+        width: 100%;
+    }
+    
+    .cart-table tr {
+        margin-bottom: 20px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .cart-table td {
+        text-align: right;
+        padding: 15px;
+        position: relative;
+        padding-left: 50%;
+    }
+    
+    .cart-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .cart-product {
+        justify-content: flex-end;
+    }
+    
+    .quantity-control {
+        justify-content: flex-end;
+    }
+}

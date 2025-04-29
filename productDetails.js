@@ -179,9 +179,9 @@ function getProductIdFromUrl() {
 }
 
 function displayProductDetails() {
-  let cartItems = [];
+    let cartItems = [];
 
-  cartItems = getCartFromStorage();
+    cartItems = getCartFromStorage();
     const productId = getProductIdFromUrl();
     const product = products.find(p => p.id === productId);
     
@@ -195,6 +195,8 @@ function displayProductDetails() {
     const cartItem = cartItems.find(item => item.id === product.id);
     const currentQuantity = cartItem ? cartItem.quantity : 1;
     const productDetails = product.details || "No additional details available for this product.";
+    let productStock = getProductStock(product.id);
+    const initialQuantity = Math.min(currentQuantity, productStock);
     const productDetailsElement = document.getElementById('product-details');
     productDetailsElement.innerHTML = `
         <div class="product-details-image">
@@ -204,6 +206,12 @@ function displayProductDetails() {
             <h1 class="product-details-title">${product.title}</h1>
             <span class="product-details-category">${product.category}</span>
             <p class="product-details-price">$${product.price.toFixed(2)}</p>
+             <div class="stock-indicator ${productStock < 5 ? 'low-stock' : ''}">
+        <i class="fas ${productStock > 0 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+        ${productStock > 0 
+          ? `<span>En stock (${productStock} disponible${productStock > 1 ? 's' : ''})</span>` 
+          : '<span>Rupture de stock</span>'}
+      </div>
             <div class="product-details-description">
                 ${product.description}
                 <p style="margin-top: 15px;">${productDetails}</p>
@@ -213,16 +221,16 @@ function displayProductDetails() {
             <div class="quantity-selector">
                 <p>Quantité:</p>
                 <div class="quantity-control">
-                    <button class="quantity-btn minus-btn" id="decrease-quantity">-</button>
-                    <input type="text" class="quantity-input" id="product-quantity" value="${currentQuantity}" readonly>
-                    <button class="quantity-btn plus-btn" id="increase-quantity">+</button>
+                    <button class="quantity-btn minus-btn" id="decrease-quantity"${initialQuantity <= 1 ? 'disabled' : ''}>-</button>
+                    <input type="text" class="quantity-input" id="product-quantity"  value="${initialQuantity}" readonly>
+                    <button class="quantity-btn plus-btn" id="increase-quantity"${initialQuantity >= productStock ? 'disabled' : ''}>+</button>
                 </div>
             </div>
             
             <div class="product-actions-large">
-                <button class="btn add-to-cart-detail" data-id="${product.id}">
-                    ${cartItem ? 'Update Cart' : 'Add to Cart'}
-                </button>
+                <button class="btn add-to-cart-detail" data-id="${product.id}" ${productStock === 0 ? 'disabled' : ''}>
+          ${productStock === 0 ? 'Indisponible' : cartItem ? 'Mettre à jour le panier' : 'Ajouter au panier'}
+        </button>
             </div>
         </div>
     `;
@@ -234,17 +242,43 @@ function displayProductDetails() {
         let quantity = parseInt(quantityInput.value);
         if (quantity > 1) {
             quantityInput.value = quantity - 1;
+            document.getElementById('increase-quantity').disabled = false;
         }
+        if (quantity - 1 <= 1) {
+            this.disabled = true;
+          }
     });
     
     document.getElementById('increase-quantity').addEventListener('click', function() {
         const quantityInput = document.getElementById('product-quantity');
         let quantity = parseInt(quantityInput.value);
-        quantityInput.value = quantity + 1;
+        const productStock = getProductStock(product.id);
+        
+        if (quantity < productStock) {
+            quantityInput.value = quantity + 1;
+            
+            // Activer le bouton "-" si on augmente la quantité
+            document.getElementById('decrease-quantity').disabled = false;
+            
+            // Désactiver le bouton "+" si on atteint le stock max
+            if (quantity + 1 >= productStock) {
+              this.disabled = true;
+            }
+          } else {
+            // Afficher un message d'alerte pour stock insuffisant
+            showToast("Stock insuffisant pour ce produit", "error");
+            this.disabled = true;
+          }
     });
     
     document.querySelector('.add-to-cart-detail').addEventListener('click', function() {
         const quantity = parseInt(document.getElementById('product-quantity').value);
+        const productStock = getProductStock(product.id);
+        
+        if (quantity > productStock) {
+            showToast("Stock insuffisant pour ce produit", "error");
+            return;
+        }
         
         if (cartItem) {
             const index = cartItems.findIndex(item => item.id === product.id);
@@ -255,8 +289,67 @@ function displayProductDetails() {
         
         addToCart(product, quantity);
         
-        this.textContent = 'Update Cart';
+        this.textContent = 'Mettre à jour le panier';
+        
+        // Ne pas décrémenter la quantité en stock ici
+        // Mettre à jour l'affichage uniquement pour refléter le nouveau statut du panier
+        const stockIndicator = document.querySelector('.stock-indicator');
+        if (stockIndicator) {
+            stockIndicator.className = `stock-indicator ${productStock < 5 ? 'low-stock' : ''}`;
+            stockIndicator.innerHTML = `
+                <i class="fas ${productStock > 0 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                ${productStock > 0 
+                ? `<span>En stock (${productStock} disponible${productStock > 1 ? 's' : ''})</span>` 
+                : '<span>Rupture de stock</span>'}
+            `;
+        }
+        
+        // Désactiver le bouton si plus de stock
+        if (productStock === 0) {
+            this.disabled = true;
+            this.textContent = 'Indisponible';
+        }
     });
+}
+
+function updateProductStock(productId, newStock) {
+    // Récupérer les produits du localStorage
+    const storedProducts = JSON.parse(localStorage.getItem('products')) || products;
+    
+    // Trouver le produit à mettre à jour
+    const productIndex = storedProducts.findIndex(p => p.id === productId);
+    
+    if (productIndex !== -1) {
+        // Mettre à jour le stock
+        storedProducts[productIndex].stock = newStock;
+        
+        // Enregistrer les produits mis à jour
+        localStorage.setItem('products', JSON.stringify(storedProducts));
+    }
+}
+
+function getProductStock(productId) {
+    const storedProducts = JSON.parse(localStorage.getItem('products')) || products;
+    const product = storedProducts.find(p => p.id === productId);
+    return product ? (product.stock || 10) : 0; // Par défaut 10 si non défini
+}
+
+function showToast(message, type = "info") {
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
+    
+    if (type === "error") {
+        toast.classList.add("toast-error");
+    } else {
+        toast.classList.remove("toast-error");
+    }
+    
+    toastMessage.textContent = message;
+    toast.classList.add("active");
+    
+    setTimeout(() => {
+        toast.classList.remove("active");
+    }, 3000);
 }
 
 function displayRelatedProducts(currentProduct) {
@@ -269,24 +362,30 @@ function displayRelatedProducts(currentProduct) {
     
     relatedProducts.forEach(product => {
         const cartItem = cartItems.find(item => item.id === product.id);
+        const productStock = getProductStock(product.id); 
         
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.innerHTML = `
             <div class="product-image">
                 <img src="${product.image}" alt="${product.title}">
+                 ${productStock < 5 ? 
+          `<span class="stock-badge ${productStock === 0 ? 'out-of-stock' : 'low-stock'}">
+            ${productStock === 0 ? 'Rupture' : 'Stock limité'}
+          </span>` : ''}
             </div>
             <div class="product-info">
                 <span class="product-category">${product.category}</span>
                 <h3 class="product-title">${product.title}</h3>
                 <p class="product-price">$${product.price.toFixed(2)}</p>
                 <p class="product-description">${product.description}</p>
-                <div class="product-actions">
-                    <button class="btn btn-sm ${cartItem ? 'btn-update' : 'add-to-cart'}" data-id="${product.id}">
-                        ${cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
-                    </button>
-                    <button class="btn-secondary btn-sm view-details" data-id="${product.id}">View Details</button>
-                </div>
+                 <div class="product-actions">
+          <button class="btn btn-sm ${cartItem ? 'btn-update' : 'add-to-cart'}" 
+            data-id="${product.id}" ${productStock === 0 ? 'disabled' : ''}>
+            ${productStock === 0 ? 'Indisponible' : cartItem ? `Dans le panier (${cartItem.quantity})` : 'Ajouter au panier'}
+          </button>
+          <button class="btn-secondary btn-sm view-details" data-id="${product.id}">Voir détails</button>
+        </div>
             </div>
         `;
         
@@ -295,35 +394,38 @@ function displayRelatedProducts(currentProduct) {
     
     relatedProductsGrid.querySelectorAll('.add-to-cart, .btn-update').forEach(button => {
         button.addEventListener('click', function() {
+            if (this.disabled) return;
             const productId = parseInt(this.getAttribute('data-id'));
             const product = products.find(p => p.id === productId);
+            const productStock = getProductStock(productId);
             
             const cartItem = cartItems.find(item => item.id === product.id);
             
             if (cartItem) {
-                cartItem.quantity += 1;
-                cartItem.totalPrice = cartItem.price * cartItem.quantity;
-                updateStorageFromCartItems();
-                updateCartCount();
-                
-                this.textContent = `In Cart (${cartItem.quantity})`;
-                this.classList.add('btn-update');
-                this.classList.remove('add-to-cart');
+                if (productStock > cartItem.quantity) {
+                    cartItem.quantity += 1;
+                    cartItem.totalPrice = cartItem.price * cartItem.quantity;
+                    updateStorageFromCartItems();
+                    updateCartCount();
+                          
+                    this.textContent = `Dans le panier (${cartItem.quantity})`;
+                    this.classList.add('btn-update');
+                    this.classList.remove('add-to-cart');
+                    
+                    // Ne pas mettre à jour le stock ici
+                  } else {
+                    showToast("Stock insuffisant pour ce produit", "error");
+                  }
             } else {
                 addToCart(product);
                 
-                this.textContent = 'In Cart (1)';
+                this.textContent = 'Dans le panier (1)';
                 this.classList.add('btn-update');
                 this.classList.remove('add-to-cart');
+                // Ne pas mettre à jour le stock ici
             }
             
-            const toast = document.getElementById("toast");
-            const toastMessage = document.getElementById("toast-message");
-            toastMessage.textContent = "Product added to cart!";
-            toast.classList.add("active");
-            setTimeout(() => {
-                toast.classList.remove("active");
-            }, 3000);
+            showToast("Produit ajouté au panier!");
         });
     });
     
@@ -347,6 +449,7 @@ function showQuickview(productId) {
     if (!product) return;
     
     const cartItem = cartItems.find(item => item.id === product.id);
+    const productStock = getProductStock(productId);
     
     const quickviewContent = document.getElementById('quickview-content');
     quickviewContent.innerHTML = `
@@ -357,15 +460,21 @@ function showQuickview(productId) {
             <h2 class="quickview-title">${product.title}</h2>
             <span class="quickview-category">${product.category}</span>
             <p class="quickview-price">$${product.price.toFixed(2)}</p>
+            <div class="stock-indicator ${productStock < 5 ? 'low-stock' : ''}">
+        <i class="fas ${productStock > 0 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+        ${productStock > 0 
+          ? `<span>En stock (${productStock} disponible${productStock > 1 ? 's' : ''})</span>` 
+          : '<span>Rupture de stock</span>'}
+      </div>
             <div class="quickview-description">
                 ${product.description}
             </div>
             <div class="quickview-actions">
-                <button class="btn add-to-cart-quickview" data-id="${product.id}">
-                    ${cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
-                </button>
-                <a href="productDetails.html?id=${product.id}" class="btn-secondary" style="text-decoration: none; font-weight: bold;">View Details</a>
-            </div>
+        <button class="btn add-to-cart-quickview" data-id="${product.id}" ${productStock === 0 ? 'disabled' : ''}>
+          ${productStock === 0 ? 'Indisponible' : cartItem ? `Dans le panier (${cartItem.quantity})` : 'Ajouter au panier'}
+        </button>
+        <a href="productDetails.html?id=${product.id}" class="btn-secondary" style="text-decoration: none; font-weight: bold;">Voir détails</a>
+      </div>
         </div>
     `;
     
@@ -377,29 +486,31 @@ function showQuickview(productId) {
     document.querySelector('.add-to-cart-quickview').addEventListener('click', function() {
         const productId = parseInt(this.getAttribute('data-id'));
         const product = products.find(p => p.id === productId);
+        const productStock = getProductStock(productId);
         
         const cartItem = cartItems.find(item => item.id === product.id);
         
         if (cartItem) {
-            cartItem.quantity += 1;
-            cartItem.totalPrice = cartItem.price * cartItem.quantity;
-            updateStorageFromCartItems();
-            updateCartCount();
-            
-            this.textContent = `In Cart (${cartItem.quantity})`;
+            if (productStock > cartItem.quantity) {
+                cartItem.quantity += 1;
+                cartItem.totalPrice = cartItem.price * cartItem.quantity;
+                updateStorageFromCartItems();
+                updateCartCount();
+                    
+                this.textContent = `Dans le panier (${cartItem.quantity})`;
+                
+                // Ne pas mettre à jour le stock ici
+              } else {
+                showToast("Stock insuffisant pour ce produit", "error");
+              }
         } else {
             addToCart(product);
             
-            this.textContent = 'In Cart (1)';
+            this.textContent = 'Dans le panier (1)';
+            // Ne pas mettre à jour le stock ici
         }
         
-        const toast = document.getElementById("toast");
-        const toastMessage = document.getElementById("toast-message");
-        toastMessage.textContent = "Product added to cart!";
-        toast.classList.add("active");
-        setTimeout(() => {
-            toast.classList.remove("active");
-        }, 3000);
+        showToast("Produit ajouté au panier!");
     });
 }
 

@@ -862,3 +862,54 @@
     background-color: #e0e0e0;
     transform: rotate(90deg);
 }
+/* Styles pour la gestion de stock */
+.low-stock {
+  color: #ff3333;
+  font-weight: bold;
+}
+
+/* Styles pour le badge de stock dans la page produit */
+.stock-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.in-stock {
+  background-color: #e6f7e6;
+  color: #28a745;
+  border: 1px solid #28a745;
+}
+
+.low-stock-badge {
+  background-color: #fff3e0;
+  color: #ff9800;
+  border: 1px solid #ff9800;
+}
+
+.out-of-stock {
+  background-color: #ffebee;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+/* Styles pour le message d'erreur de stock */
+.stock-error {
+  color: #dc3545;
+  margin-top: 10px;
+  font-weight: bold;
+  display: none;
+}
+
+.stock-error.visible {
+  display: block;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

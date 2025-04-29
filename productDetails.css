@@ -325,3 +325,79 @@
         font-size: 1.4rem;
     }
 }
+/* Style pour l'indicateur de stock sur la page produit */
+.stock-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 15px 0;
+    padding: 10px 15px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.stock-indicator i {
+    font-size: 1.1rem;
+    color: #4caf50;
+}
+
+.stock-indicator.low-stock i {
+    color: #ff9800;
+}
+
+.stock-indicator i.fa-times-circle {
+    color: #e94560;
+}
+
+.stock-indicator span {
+    font-size: 0.95rem;
+}
+
+/* Badge de stock pour les cartes produit */
+.stock-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.stock-badge.low-stock {
+    background-color: #ff9800;
+}
+
+.stock-badge.out-of-stock {
+    background-color: #e94560;
+}
+
+/* Style pour les boutons désactivés */
+.product-actions-large .btn:disabled,
+.product-actions .btn:disabled {
+    background-color: #f0f0f0;
+    color: #777;
+    cursor: not-allowed;
+    border-color: #ddd;
+}
+
+/* Style pour la quickview */
+.quickview-info .stock-indicator {
+    margin: 10px 0;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+/* Adaptations responsive */
+@media (max-width: 768px) {
+    .stock-indicator {
+        padding: 8px 12px;
+    }
+    
+    .stock-badge {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+}

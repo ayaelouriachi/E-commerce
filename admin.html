@@ -1,0 +1,327 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - E-commerce Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="shopping.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="shopping.html" class="logo"><img src="logo.png" alt=""></a>
+        <div class="nav-links">
+            <a href="shopping.html">Home</a>
+            <a href="shopping.html#products">Products</a>
+            <a href="shopping.html#category">Categories</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="nav-icons">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-user admin-active"></i>
+            <a href="panierPage.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count-nav">0</span>
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Admin Header -->
+    <section class="admin-header">
+        <div class="admin-header-content">
+            <h1><i class="fas fa-cog"></i> Admin Dashboard</h1>
+            <p>Manage your products, categories, and store settings</p>
+        </div>
+    </section>
+
+    <!-- Admin Statistics -->
+    <section class="admin-stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-box"></i>
+                <h3>Products</h3>
+                <p class="stat-number" id="product-count">10</p>
+            </div>
+            <div id="category-stats">
+                <div class="stat-card">
+                <i class="fas fa-tags"></i>
+                <h3>Categories</h3>
+                <p class="stat-number">3</p>
+            </div>
+        </div>
+            
+            <div class="stat-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Orders</h3>
+                <p class="stat-number">24</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3>Customers</h3>
+                <p class="stat-number">156</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Tabs -->
+    <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="products">Products</button>
+        <button class="tab-btn" data-tab="add-product">Add Product</button>
+        <button class="tab-btn" data-tab="categories">Categories</button>
+        <button class="tab-btn" data-tab="settings">Settings</button>
+    </div>
+
+    <!-- Products Tab -->
+    <section class="admin-content active" id="products-tab">
+        <div class="admin-actions">
+            <div class="search-products">
+                <input type="text" id="product-search" placeholder="Search products...">
+                <button id="search-product-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="filter-products">
+                <select id="category-filter">
+                    <option value="all">All Categories</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="makeup">Makeup</option>
+                    <option value="accessories">Accessories</option>
+                </select>
+                <select id="sort-products">
+                    <option value="default">Sort by</option>
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="price-asc">Price (Low to High)</option>
+                    <option value="price-desc">Price (High to Low)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="products-table-container">
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="products-list">
+                    <!-- Products will be loaded here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Add Product Tab -->
+    <section class="admin-content" id="add-product-tab">
+        <form id="product-form" class="product-form">
+            <h2 id="form-title">Add New Product</h2>
+            <input type="hidden" id="product-id">
+            
+            <div class="form-group">
+                <label for="product-title">Product Title</label>
+                <input type="text" id="product-title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-category">Category</label>
+                <select id="product-category" required>
+                    <option value="">Select Category</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="makeup">Makeup</option>
+                    <option value="accessories">Accessories</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-price">Price ($)</label>
+                <input type="number" id="product-price" step="0.01" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-description">Description</label>
+                <textarea id="product-description" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+            <label for="product-details">Product Details</label>
+  <textarea id="product-details" rows="4" placeholder="Enter detailed product description"></textarea>
+        </div>
+            
+            <div class="form-group">
+                <label for="product-image">Image URL</label>
+                <input type="text" id="product-image" required>
+                <div class="image-preview">
+                    <img id="image-preview" src="" alt="Product Image Preview">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" id="cancel-btn" class="btn-secondary">Cancel</button>
+                <button type="submit" id="save-btn" class="btn">Save Product</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Categories Tab -->
+    <section class="admin-content" id="categories-tab">
+        <div class="categories-management">
+            <div class="category-list">
+                <h3>Current Categories</h3>
+                <ul id="categories-list">
+                    <li>
+                        <span>Clothing</span>
+                        <div class="category-actions">
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                    <li>
+                        <span>Makeup</span>
+                        <div class="category-actions">
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                    <li>
+                        <span>Accessories</span>
+                        <div class="category-actions">
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="add-category">
+                <h3>Add Category</h3>
+                <form id="category-form">
+                    <div class="form-group">
+                      <label for="category-name">Category Name</label>
+                      <input type="text" id="category-name" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="category-image">Category Image URL</label>
+                      <input type="text" id="category-image" required>
+                      <small>URL of the image to represent this category</small>
+                    </div>
+                    <button type="submit" class="btn">Add Category</button>
+                  </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Settings Tab -->
+    <section class="admin-content" id="settings-tab">
+        <div class="settings-form">
+            <h3>Store Settings</h3>
+            <form id="settings-form">
+                <div class="form-group">
+                    <label for="store-name">Store Name</label>
+                    <input type="text" id="store-name" value="E-commerce Shop">
+                </div>
+                
+                <div class="form-group">
+                    <label for="store-email">Store Email</label>
+                    <input type="email" id="store-email" value="contact@ecommerce.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="store-phone">Store Phone</label>
+                    <input type="tel" id="store-phone" value="+1 (555) 123-4567">
+                </div>
+                
+                <div class="form-group">
+                    <label for="store-currency">Currency</label>
+                    <select id="store-currency">
+                        <option value="USD" selected>USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Edit Product Modal -->
+    <div class="product-modal" id="edit-product-modal">
+        <div class="modal-content">
+            <button class="modal-close"><i class="fas fa-times"></i></button>
+            <div class="product-edit-form" id="edit-product-form">
+                <!-- Edit form will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Product added successfully!</span>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="confirm-modal" id="confirm-delete-modal">
+        <div class="confirm-modal-content">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this product? This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button id="cancel-delete" class="btn-secondary">Cancel</button>
+                <button id="confirm-delete" class="btn-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Shop</h3>
+                <ul>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Best Sellers</a></li>
+                    <li><a href="#">Sale</a></li>
+                    <li><a href="#">Collections</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Follow Us</h3>
+                <ul>
+                    <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                    <li><a href="#"><i class="fab fa-pinterest"></i> Pinterest</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ShopNow. All rights reserved.</p>
+        </div>
+    </footer>
+
+     <script src="admin.js"></script>
+</body>
+</html> 

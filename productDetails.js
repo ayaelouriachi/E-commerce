@@ -1,5 +1,5 @@
-
-const products = [
+// Load products from localStorage or use default products
+const products = JSON.parse(localStorage.getItem('products')) || [
     {
       id: 1,
       title: "Premium T-Shirt",
@@ -91,354 +91,232 @@ const products = [
       details: "Elevate your look with these high-end sunglasses, featuring UV400 protection and polarized lenses to reduce glare. Lightweight frame design ensures comfort and durability all day long."
     }
   ];
-  
-   
-    let cartItems = [];
 
-    
-    function getCartFromStorage() {
-        const storedCart = localStorage.getItem('cart');
-        if (storedCart) {
-       
-            const simpleCart = JSON.parse(storedCart);
-            
-           
-            cartItems = [];
-            
-       
-            simpleCart.forEach(item => {
-                const existingItem = cartItems.find(cartItem => cartItem.id === item.id);
-                if (existingItem) {
-                    existingItem.quantity += 1;
-                    existingItem.totalPrice = existingItem.quantity * existingItem.price;
-                } else {
-                    cartItems.push({
-                        ...item,
-                        quantity: 1,
-                        totalPrice: item.price
-                    });
-                }
-            });
-        }
-        return cartItems;
-    }
+let cartItems = [];
 
-    
-    function updateStorageFromCartItems() {
-      
-        let simpleCart = [];
-        cartItems.forEach(item => {
-            for (let i = 0; i < item.quantity; i++) {
-                simpleCart.push({
-                    id: item.id,
-                    title: item.title,
-                    price: item.price,
-                    image: item.image,
-                    category: item.category
+function getCartFromStorage() {
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+        const simpleCart = JSON.parse(storedCart);
+        
+        cartItems = [];
+        
+        simpleCart.forEach(item => {
+            const existingItem = cartItems.find(cartItem => cartItem.id === item.id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+                existingItem.totalPrice = existingItem.quantity * existingItem.price;
+            } else {
+                cartItems.push({
+                    ...item,
+                    quantity: 1,
+                    totalPrice: item.price
                 });
             }
         });
-        
-        localStorage.setItem('cart', JSON.stringify(simpleCart));
     }
+    return cartItems;
+}
 
-
-    function updateCartCount() {
-        const cartCount = document.getElementById('cart-count-nav');
-        const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-        cartCount.textContent = totalItems;
-    }
-
-   
-    function addToCart(product, quantity = 1) {
-        const existingItem = cartItems.find(item => item.id === product.id);
-        
-        if (existingItem) {
-            
-            existingItem.quantity += quantity;
-            existingItem.totalPrice = existingItem.price * existingItem.quantity;
-        } else {
-           
-            cartItems.push({
-                ...product,
-                quantity: quantity,
-                totalPrice: product.price * quantity
+function updateStorageFromCartItems() {
+    let simpleCart = [];
+    cartItems.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+            simpleCart.push({
+                id: item.id,
+                title: item.title,
+                price: item.price,
+                image: item.image,
+                category: item.category
             });
         }
-        
-     
-        updateStorageFromCartItems();
-        updateCartCount();
-
-       
-        const toast = document.getElementById("toast");
-        const toastMessage = document.getElementById("toast-message");
-        
-        if (quantity === 1) {
-            toastMessage.textContent = "Product added to cart!";
-        } else {
-            toastMessage.textContent = `${quantity} items added to cart!`;
-        }
-        
-        toast.classList.add("active");
-        setTimeout(() => {
-            toast.classList.remove("active");
-        }, 3000);
-    }
-
-  
-    function getProductIdFromUrl() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return parseInt(urlParams.get('id'));
-    }
-
- 
-    function displayProductDetails() {
-      let cartItems = [];
-
-      cartItems = getCartFromStorage();
-        const productId = getProductIdFromUrl();
-        const product = products.find(p => p.id === productId);
-        
-        if (!product) {
-            window.location.href = 'shopping.html'; 
-            return;
-        }
-        
-       
-        document.title = `${product.title} - Product Details`;
-        
-      
-        const cartItem = cartItems.find(item => item.id === product.id);
-        const currentQuantity = cartItem ? cartItem.quantity : 1;
-        
-        const productDetailsElement = document.getElementById('product-details');
-        productDetailsElement.innerHTML = `
-            <div class="product-details-image">
-                <img src="${product.image}" alt="${product.title}">
-            </div>
-            <div class="product-details-info">
-                <h1 class="product-details-title">${product.title}</h1>
-                <span class="product-details-category">${product.category}</span>
-                <p class="product-details-price">$${product.price.toFixed(2)}</p>
-                <div class="product-details-description">
-                    ${product.description}
-                    <p style="margin-top: 15px;">${product.details}</p>
-                </div>
-                
-                <!-- Quantity selector -->
-                <div class="quantity-selector">
-                    <p>Quantité:</p>
-                    <div class="quantity-control">
-                        <button class="quantity-btn minus-btn" id="decrease-quantity">-</button>
-                        <input type="text" class="quantity-input" id="product-quantity" value="${currentQuantity}" readonly>
-                        <button class="quantity-btn plus-btn" id="increase-quantity">+</button>
-                    </div>
-                </div>
-                
-                <div class="product-actions-large">
-                    <button class="btn add-to-cart-detail" data-id="${product.id}">
-                        ${cartItem ? 'Update Cart' : 'Add to Cart'}
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        
-        displayRelatedProducts(product);
-        
-    
-        document.getElementById('decrease-quantity').addEventListener('click', function() {
-            const quantityInput = document.getElementById('product-quantity');
-            let quantity = parseInt(quantityInput.value);
-            if (quantity > 1) {
-                quantityInput.value = quantity - 1;
-            }
-        });
-        
-        document.getElementById('increase-quantity').addEventListener('click', function() {
-            const quantityInput = document.getElementById('product-quantity');
-            let quantity = parseInt(quantityInput.value);
-            quantityInput.value = quantity + 1;
-        });
-        
-       
-        document.querySelector('.add-to-cart-detail').addEventListener('click', function() {
-            const quantity = parseInt(document.getElementById('product-quantity').value);
-            
-          
-            if (cartItem) {
-                const index = cartItems.findIndex(item => item.id === product.id);
-                if (index !== -1) {
-                    cartItems.splice(index, 1);
-                }
-            }
-            
-            addToCart(product, quantity);
-            
-           
-            this.textContent = 'Update Cart';
-        });
-    }
-
-    
-    function displayRelatedProducts(currentProduct) {
-        const relatedProducts = products
-            .filter(p => p.category === currentProduct.category && p.id !== currentProduct.id)
-            .slice(0, 4); 
-        
-        const relatedProductsGrid = document.getElementById('related-products-grid');
-        relatedProductsGrid.innerHTML = '';
-        
-        relatedProducts.forEach(product => {
-          
-            const cartItem = cartItems.find(item => item.id === product.id);
-            
-            const productCard = document.createElement('div');
-            productCard.className = 'product-card';
-            productCard.innerHTML = `
-                <div class="product-image">
-                    <img src="${product.image}" alt="${product.title}">
-                </div>
-                <div class="product-info">
-                    <span class="product-category">${product.category}</span>
-                    <h3 class="product-title">${product.title}</h3>
-                    <p class="product-price">$${product.price.toFixed(2)}</p>
-                    <p class="product-description">${product.description}</p>
-                    <div class="product-actions">
-                        <button class="btn btn-sm ${cartItem ? 'btn-update' : 'add-to-cart'}" data-id="${product.id}">
-                            ${cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
-                        </button>
-                        <button class="btn-secondary btn-sm view-details" data-id="${product.id}">View Details</button>
-                    </div>
-                </div>
-            `;
-            
-            relatedProductsGrid.appendChild(productCard);
-        });
-        
- 
-        relatedProductsGrid.querySelectorAll('.add-to-cart, .btn-update').forEach(button => {
-            button.addEventListener('click', function() {
-                const productId = parseInt(this.getAttribute('data-id'));
-                const product = products.find(p => p.id === productId);
-                
-               
-                const cartItem = cartItems.find(item => item.id === product.id);
-                
-                if (cartItem) {
-                  
-                    cartItem.quantity += 1;
-                    cartItem.totalPrice = cartItem.price * cartItem.quantity;
-                    updateStorageFromCartItems();
-                    updateCartCount();
-                    
-                    
-                    this.textContent = `In Cart (${cartItem.quantity})`;
-                    this.classList.add('btn-update');
-                    this.classList.remove('add-to-cart');
-                } else {
-                 
-                    addToCart(product);
-                    
-                
-                    this.textContent = 'In Cart (1)';
-                    this.classList.add('btn-update');
-                    this.classList.remove('add-to-cart');
-                }
-                
-               
-                const toast = document.getElementById("toast");
-                const toastMessage = document.getElementById("toast-message");
-                toastMessage.textContent = "Product added to cart!";
-                toast.classList.add("active");
-                setTimeout(() => {
-                    toast.classList.remove("active");
-                }, 3000);
-            });
-        });
-        
-        relatedProductsGrid.querySelectorAll('.view-details').forEach(button => {
-            button.addEventListener('click', function() {
-                const productId = parseInt(this.getAttribute('data-id'));
-                window.location.href = `productDetails.html?id=${productId}`;
-            });
-        });
-    }
-
-  
-    window.addEventListener('DOMContentLoaded', function() {
-        
-        getCartFromStorage();
-        
-       
-        displayProductDetails();
-        
-   
-        updateCartCount();
     });
-    function showQuickview(productId) {
-        const product = products.find(p => p.id === productId);
+    
+    localStorage.setItem('cart', JSON.stringify(simpleCart));
+}
+
+function updateCartCount() {
+    const cartCount = document.getElementById('cart-count-nav');
+    const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+    cartCount.textContent = totalItems;
+}
+
+function addToCart(product, quantity = 1) {
+    const existingItem = cartItems.find(item => item.id === product.id);
+    
+    if (existingItem) {
+        existingItem.quantity += quantity;
+        existingItem.totalPrice = existingItem.price * existingItem.quantity;
+    } else {
+        cartItems.push({
+            ...product,
+            quantity: quantity,
+            totalPrice: product.price * quantity
+        });
+    }
+    
+    updateStorageFromCartItems();
+    updateCartCount();
+
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
+    
+    if (quantity === 1) {
+        toastMessage.textContent = "Product added to cart!";
+    } else {
+        toastMessage.textContent = `${quantity} items added to cart!`;
+    }
+    
+    toast.classList.add("active");
+    setTimeout(() => {
+        toast.classList.remove("active");
+    }, 3000);
+}
+
+function getProductIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return parseInt(urlParams.get('id'));
+}
+
+function displayProductDetails() {
+  let cartItems = [];
+
+  cartItems = getCartFromStorage();
+    const productId = getProductIdFromUrl();
+    const product = products.find(p => p.id === productId);
+    
+    if (!product) {
+        window.location.href = 'shopping.html'; 
+        return;
+    }
+    
+    document.title = `${product.title} - Product Details`;
+    
+    const cartItem = cartItems.find(item => item.id === product.id);
+    const currentQuantity = cartItem ? cartItem.quantity : 1;
+    const productDetails = product.details || "No additional details available for this product.";
+    const productDetailsElement = document.getElementById('product-details');
+    productDetailsElement.innerHTML = `
+        <div class="product-details-image">
+            <img src="${product.image}" alt="${product.title}">
+        </div>
+        <div class="product-details-info">
+            <h1 class="product-details-title">${product.title}</h1>
+            <span class="product-details-category">${product.category}</span>
+            <p class="product-details-price">$${product.price.toFixed(2)}</p>
+            <div class="product-details-description">
+                ${product.description}
+                <p style="margin-top: 15px;">${productDetails}</p>
+            </div>
+            
+            <!-- Quantity selector -->
+            <div class="quantity-selector">
+                <p>Quantité:</p>
+                <div class="quantity-control">
+                    <button class="quantity-btn minus-btn" id="decrease-quantity">-</button>
+                    <input type="text" class="quantity-input" id="product-quantity" value="${currentQuantity}" readonly>
+                    <button class="quantity-btn plus-btn" id="increase-quantity">+</button>
+                </div>
+            </div>
+            
+            <div class="product-actions-large">
+                <button class="btn add-to-cart-detail" data-id="${product.id}">
+                    ${cartItem ? 'Update Cart' : 'Add to Cart'}
+                </button>
+            </div>
+        </div>
+    `;
+    
+    displayRelatedProducts(product);
+    
+    document.getElementById('decrease-quantity').addEventListener('click', function() {
+        const quantityInput = document.getElementById('product-quantity');
+        let quantity = parseInt(quantityInput.value);
+        if (quantity > 1) {
+            quantityInput.value = quantity - 1;
+        }
+    });
+    
+    document.getElementById('increase-quantity').addEventListener('click', function() {
+        const quantityInput = document.getElementById('product-quantity');
+        let quantity = parseInt(quantityInput.value);
+        quantityInput.value = quantity + 1;
+    });
+    
+    document.querySelector('.add-to-cart-detail').addEventListener('click', function() {
+        const quantity = parseInt(document.getElementById('product-quantity').value);
         
-        if (!product) return;
+        if (cartItem) {
+            const index = cartItems.findIndex(item => item.id === product.id);
+            if (index !== -1) {
+                cartItems.splice(index, 1);
+            }
+        }
         
+        addToCart(product, quantity);
         
+        this.textContent = 'Update Cart';
+    });
+}
+
+function displayRelatedProducts(currentProduct) {
+    const relatedProducts = products
+        .filter(p => p.category === currentProduct.category && p.id !== currentProduct.id)
+        .slice(0, 4); 
+    
+    const relatedProductsGrid = document.getElementById('related-products-grid');
+    relatedProductsGrid.innerHTML = '';
+    
+    relatedProducts.forEach(product => {
         const cartItem = cartItems.find(item => item.id === product.id);
         
-        const quickviewContent = document.getElementById('quickview-content');
-        quickviewContent.innerHTML = `
-            <div class="quickview-image">
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.innerHTML = `
+            <div class="product-image">
                 <img src="${product.image}" alt="${product.title}">
             </div>
-            <div class="quickview-info">
-                <h2 class="quickview-title">${product.title}</h2>
-                <span class="quickview-category">${product.category}</span>
-                <p class="quickview-price">$${product.price.toFixed(2)}</p>
-                <div class="quickview-description">
-                    ${product.description}
-                </div>
-                <div class="quickview-actions">
-                    <button class="btn add-to-cart-quickview" data-id="${product.id}">
+            <div class="product-info">
+                <span class="product-category">${product.category}</span>
+                <h3 class="product-title">${product.title}</h3>
+                <p class="product-price">$${product.price.toFixed(2)}</p>
+                <p class="product-description">${product.description}</p>
+                <div class="product-actions">
+                    <button class="btn btn-sm ${cartItem ? 'btn-update' : 'add-to-cart'}" data-id="${product.id}">
                         ${cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
                     </button>
-                    <a href="productDetails.html?id=${product.id}" class="btn-secondary" style="text-decoration: none; font-weight: bold;">View Details</a>
+                    <button class="btn-secondary btn-sm view-details" data-id="${product.id}">View Details</button>
                 </div>
             </div>
         `;
         
-       
-        const quickviewModal = document.getElementById('product-quickview');
-        quickviewModal.style.display = 'block';
-        
-   
-        document.body.style.overflow = 'hidden';
-        
-       
-        document.querySelector('.add-to-cart-quickview').addEventListener('click', function() {
+        relatedProductsGrid.appendChild(productCard);
+    });
+    
+    relatedProductsGrid.querySelectorAll('.add-to-cart, .btn-update').forEach(button => {
+        button.addEventListener('click', function() {
             const productId = parseInt(this.getAttribute('data-id'));
             const product = products.find(p => p.id === productId);
             
-           
             const cartItem = cartItems.find(item => item.id === product.id);
             
             if (cartItem) {
-              
                 cartItem.quantity += 1;
                 cartItem.totalPrice = cartItem.price * cartItem.quantity;
                 updateStorageFromCartItems();
                 updateCartCount();
                 
-             
                 this.textContent = `In Cart (${cartItem.quantity})`;
+                this.classList.add('btn-update');
+                this.classList.remove('add-to-cart');
             } else {
-               
                 addToCart(product);
                 
-                
                 this.textContent = 'In Cart (1)';
+                this.classList.add('btn-update');
+                this.classList.remove('add-to-cart');
             }
             
-         
             const toast = document.getElementById("toast");
             const toastMessage = document.getElementById("toast-message");
             toastMessage.textContent = "Product added to cart!";
@@ -447,84 +325,145 @@ const products = [
                 toast.classList.remove("active");
             }, 3000);
         });
-    }
+    });
     
+    relatedProductsGrid.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = parseInt(this.getAttribute('data-id'));
+            window.location.href = `productDetails.html?id=${productId}`;
+        });
+    });
+}
 
-    function closeQuickview() {
-        const quickviewModal = document.getElementById('product-quickview');
-        quickviewModal.style.display = 'none';
-        
-       
-        document.body.style.overflow = '';
-    }
+window.addEventListener('DOMContentLoaded', function() {
+    getCartFromStorage();
+    displayProductDetails();
+    updateCartCount();
+});
+
+function showQuickview(productId) {
+    const product = products.find(p => p.id === productId);
     
-
-    window.addEventListener('DOMContentLoaded', function() {
-        
-        
-       
-        getCartFromStorage();
-        updateCartCount();
-        
-      
-        displayProductDetails();
-        
-        
-        document.querySelector('.close-quickview').addEventListener('click', closeQuickview);
-        
-       
-        window.addEventListener('click', function(event) {
-            const quickviewModal = document.getElementById('product-quickview');
-            if (event.target === quickviewModal) {
-                closeQuickview();
-            }
-        });
-        
-      
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeQuickview();
-            }
-        });
-        
-        
-        const originalDisplayRelatedProducts = displayRelatedProducts;
-        
-   
-        displayRelatedProducts = function(currentProduct) {
-           
-            originalDisplayRelatedProducts(currentProduct);
-            
-     
-            const productCards = document.querySelectorAll('.product-card');
-            
-            productCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    
-                    const isButton = e.target.tagName === 'BUTTON' || 
-                                    e.target.closest('button') || 
-                                    e.target.tagName === 'A' ||
-                                    e.target.closest('a') ||
-                                    e.target.closest('.product-actions');
-                    
-                    if (!isButton) {
-                        
-                        const viewDetailsBtn = this.querySelector('.view-details');
-                        if (viewDetailsBtn) {
-                            const productId = parseInt(viewDetailsBtn.getAttribute('data-id'));
-                            e.preventDefault();
-                            e.stopPropagation();
-                            showQuickview(productId);
-                        }
-                    }
-                });
-            });
-        };
-        
-       
-        const productId = getProductIdFromUrl();
+    if (!product) return;
+    
+    const cartItem = cartItems.find(item => item.id === product.id);
+    
+    const quickviewContent = document.getElementById('quickview-content');
+    quickviewContent.innerHTML = `
+        <div class="quickview-image">
+            <img src="${product.image}" alt="${product.title}">
+        </div>
+        <div class="quickview-info">
+            <h2 class="quickview-title">${product.title}</h2>
+            <span class="quickview-category">${product.category}</span>
+            <p class="quickview-price">$${product.price.toFixed(2)}</p>
+            <div class="quickview-description">
+                ${product.description}
+            </div>
+            <div class="quickview-actions">
+                <button class="btn add-to-cart-quickview" data-id="${product.id}">
+                    ${cartItem ? `In Cart (${cartItem.quantity})` : 'Add to Cart'}
+                </button>
+                <a href="productDetails.html?id=${product.id}" class="btn-secondary" style="text-decoration: none; font-weight: bold;">View Details</a>
+            </div>
+        </div>
+    `;
+    
+    const quickviewModal = document.getElementById('product-quickview');
+    quickviewModal.style.display = 'block';
+    
+    document.body.style.overflow = 'hidden';
+    
+    document.querySelector('.add-to-cart-quickview').addEventListener('click', function() {
+        const productId = parseInt(this.getAttribute('data-id'));
         const product = products.find(p => p.id === productId);
-        if (product) {
-            displayRelatedProducts(product);
+        
+        const cartItem = cartItems.find(item => item.id === product.id);
+        
+        if (cartItem) {
+            cartItem.quantity += 1;
+            cartItem.totalPrice = cartItem.price * cartItem.quantity;
+            updateStorageFromCartItems();
+            updateCartCount();
+            
+            this.textContent = `In Cart (${cartItem.quantity})`;
+        } else {
+            addToCart(product);
+            
+            this.textContent = 'In Cart (1)';
+        }
+        
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toast-message");
+        toastMessage.textContent = "Product added to cart!";
+        toast.classList.add("active");
+        setTimeout(() => {
+            toast.classList.remove("active");
+        }, 3000);
+    });
+}
+
+function closeQuickview() {
+    const quickviewModal = document.getElementById('product-quickview');
+    quickviewModal.style.display = 'none';
+    
+    document.body.style.overflow = '';
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    getCartFromStorage();
+    updateCartCount();
+    
+    displayProductDetails();
+    
+    document.querySelector('.close-quickview').addEventListener('click', closeQuickview);
+    
+    window.addEventListener('click', function(event) {
+        const quickviewModal = document.getElementById('product-quickview');
+        if (event.target === quickviewModal) {
+            closeQuickview();
         }
     });
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeQuickview();
+        }
+    });
+    
+    const originalDisplayRelatedProducts = displayRelatedProducts;
+    
+    displayRelatedProducts = function(currentProduct) {
+        originalDisplayRelatedProducts(currentProduct);
+        
+        const productCards = document.querySelectorAll('.product-card');
+        
+        productCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                
+                const isButton = e.target.tagName === 'BUTTON' || 
+                                e.target.closest('button') || 
+                                e.target.tagName === 'A' ||
+                                e.target.closest('a') ||
+                                e.target.closest('.product-actions');
+                
+                if (!isButton) {
+                    
+                    const viewDetailsBtn = this.querySelector('.view-details');
+                    if (viewDetailsBtn) {
+                        const productId = parseInt(viewDetailsBtn.getAttribute('data-id'));
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showQuickview(productId);
+                    }
+                }
+            });
+        });
+    };
+    
+    const productId = getProductIdFromUrl();
+    const product = products.find(p => p.id === productId);
+    if (product) {
+        displayRelatedProducts(product);
+    }
+});

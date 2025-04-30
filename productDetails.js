@@ -331,7 +331,7 @@ function updateProductStock(productId, newStock) {
 function getProductStock(productId) {
     const storedProducts = JSON.parse(localStorage.getItem('products')) || products;
     const product = storedProducts.find(p => p.id === productId);
-    return product ? (product.stock || 10) : 0; // Par défaut 10 si non défini
+    return product ? (product.stock ) : 0; // Par défaut 10 si non défini
 }
 
 function showToast(message, type = "info") {

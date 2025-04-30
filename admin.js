@@ -1,96 +1,7 @@
-// Base products data - will be stored in localStorage
-let products = JSON.parse(localStorage.getItem('products')) || [
-    {
-      id: 1,
-      title: "Premium T-Shirt",
-      category: "clothing",
-      price: 29.99,
-      description: "Soft and comfortable premium cotton t-shirt with a modern fit. Available in multiple colors and sizes.",
-      image: "images/shirt.png",
-      stock: 20
-    },
-    {
-      id: 2,
-      title: "Classic Jeans",
-      category: "clothing",
-      price: 59.99,
-      description: "Classic denim jeans with a straight fit design. Durable and versatile for everyday wear.",
-      image: "images/jeans.png",
-      stock: 15
-    },
-    {
-      id: 3,
-      title: "Liquid Foundation",
-      category: "makeup",
-      price: 24.99,
-      description: "Buildable coverage foundation with a natural finish, available in 12 shades.",
-      image: "images/Fon.png",
-      stock: 10
-    },
-    {
-      id: 4,
-      title: "Smartphone Case",
-      category: "accessories",
-      price: 19.99,
-      description: "Durable and stylish smartphone case made from premium materials to protect your device.",
-      image: "images/phone.png",
-      stock: 5
-    },
-    {
-      id: 5,
-      title: "Summer Dress",
-      category: "clothing",
-      price: 49.99,
-      description: "Lightweight and breathable summer dress with a floral pattern. Perfect for warm weather.",
-      image: "images/Robe.png",
-      stock: 8
-    },
-    {
-      id: 6,
-      title: "Matte Lipstick Set",
-      category: "makeup",
-      price: 34.99,
-      description: "Set of 5 long‑wear matte lipsticks in a range of bold shades.",
-      image: "images/Lip.png",
-      stock: 12
-    },
-    {
-      id: 7,
-      title: "Leather Wallet",
-      category: "accessories",
-      price: 39.99,
-      description: "Genuine leather wallet with multiple card slots and a sleek design.",
-      image: "images/Wal.png",
-      stock: 7
-    },
-    {
-      id: 8,
-      title: "Eyeshadow Palette",
-      category: "makeup",
-      price: 29.99,
-      description: "12‑pan eyeshadow palette with a mix of mattes and shimmers for endless looks.",
-      image: "images/eye.png",
-      stock: 9
-    },
-    {
-      id: 9,
-      title: "Winter Jacket",
-      category: "clothing",
-      price: 149.99,
-      description: "Warm and windproof winter jacket with a stylish design and multiple pockets.",
-      image: "images/jacket.png",
-      stock: 6
-    },
-    {
-      id: 10,
-      title: "Sunglasses",
-      category: "accessories",
-      price: 89.99,
-      description: "Designer sunglasses with UV protection and polarized lenses for exceptional clarity.",
-      image: "images/Sun.png",
-      stock: 4
-    }
-  ];
+import { initProducts } from './products.js';
+
+// Initialiser les produits
+let products = initProducts();
   
   // If products don't exist in localStorage, initialize them
   if (!localStorage.getItem('products')) {
@@ -632,39 +543,7 @@ let products = JSON.parse(localStorage.getItem('products')) || [
     `;
   }
   // Update categories list
-  function updateCategoriesList() {
-    const categoriesList = document.getElementById('categories-list');
-    const defaultCategories = [
-      { name: 'clothing', image: 'category1.png' },
-      { name: 'makeup', image: 'category3.png' },
-      { name: 'accessories', image: 'category2.png' }
-    ];
-    const categories = JSON.parse(localStorage.getItem('categories')) || defaultCategories;
-    
-    categoriesList.innerHTML = '';
-    
-    
-    categories.forEach(category => {
-      const categoryName = typeof category === 'object' ? category.name : category;
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <span>${categoryName}</span>
-        <div class="category-actions">
-          <button class="btn-icon edit-category" data-category="${categoryName}">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="btn-icon delete-category" data-category="${categoryName}">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      `;
-      
-      categoriesList.appendChild(li);
-    });
-    addCategoryEventListeners();
-    // Add event listeners to edit and delete category buttons
-    // (These functions can be implemented later for full category management)
-  }
+ 
   
   // Initialize when DOM is loaded
   document.addEventListener('DOMContentLoaded', function() {

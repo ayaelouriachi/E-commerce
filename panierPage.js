@@ -36,9 +36,9 @@ function displayCart() {
         cartContent.innerHTML = `
             <div class="empty-cart-message">
                 <i class="fas fa-shopping-cart"></i>
-                <h2>Votre panier est vide</h2>
-                <p>Découvrez nos produits et ajoutez-les à votre panier</p>
-                <a href="shopping.html#products" class="btn">Parcourir les produits</a>
+                <h2>Your cart is empty</h2>
+                <p>Discover our products and add them to your cart</p>
+                <a href="shopping.html#products" class="btn">Browse products</a>
             </div>
         `;
         return;
@@ -52,9 +52,9 @@ function displayCart() {
         <table class="cart-table">
             <thead>
                 <tr>
-                    <th>Produit</th>
-                    <th>Prix</th>
-                    <th>Quantité</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
                     <th>Total</th>
                     <th></th>
                 </tr>
@@ -62,11 +62,11 @@ function displayCart() {
             <tbody>
     `;
     
-    // Ajouter une vérification du stock disponible
+    // Add available stock check
     let hasStockIssue = false;
     
     cartItems.forEach(item => {
-        // Vérifier le stock disponible
+        // Check available stock
         const productStock = getProductStock(item.id);
         const stockClass = productStock < item.quantity ? 'stock-warning' : '';
         if (productStock < item.quantity) {
@@ -82,7 +82,7 @@ function displayCart() {
                             <h3>${item.title}</h3>
                             <span class="product-category">${item.category}</span>
                             ${productStock < item.quantity ? 
-                              `<div class="stock-warning-message">Stock disponible: ${productStock}</div>` : ''}
+                              `<div class="stock-warning-message">Available stock: ${productStock}</div>` : ''}
                         </div>
                     </div>
                 </td>
@@ -110,12 +110,12 @@ function displayCart() {
         
         <div class="cart-summary">
             <div class="summary-row">
-                <span>Sous-total</span>
+                <span>Subtotal</span>
                 <span>$${subtotal.toFixed(2)}</span>
             </div>
             <div class="summary-row">
-                <span>Frais de livraison</span>
-                <span>${shipping === 0 ? 'Gratuit' : '$' + shipping.toFixed(2)}</span>
+                <span>Shipping fees</span>
+                <span>${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span>
             </div>
             <div class="summary-row">
                 <span>Total</span>
@@ -124,16 +124,16 @@ function displayCart() {
         </div>
         
         <div class="stock-error" id="stock-error">
-            Certains produits n'ont pas de stock suffisant. Veuillez ajuster les quantités.
+            Some products don't have sufficient stock. Please adjust quantities.
         </div>
         
-        <button class="checkout-btn" ${hasStockIssue ? 'disabled' : ''}>Passer à la caisse</button>
-        <a href="shopping.html#products" class="continue-shopping">Continuer vos achats</a>
+        <button class="checkout-btn" ${hasStockIssue ? 'disabled' : ''}>Proceed to checkout</button>
+        <a href="shopping.html#products" class="continue-shopping">Continue shopping</a>
     `;
     
     cartContent.innerHTML = cartHTML;
     
-    // Afficher un message d'erreur si nécessaire
+    // Display error message if needed
     const stockError = document.getElementById('stock-error');
     if (hasStockIssue && stockError) {
         stockError.classList.add('visible');
@@ -162,13 +162,13 @@ function displayCart() {
             if (cartItem && productStock > cartItem.quantity) {
                 updateQuantity(productId, 'increase');
             } else {
-                // Afficher un message d'alerte pour stock insuffisant
-                showToast("Stock insuffisant pour ce produit", "error");
+                // Display alert message for insufficient stock
+                showToast("Insufficient stock for this product", "error");
             }
         });
     });
     
-    // Mettre à jour la fonction de paiement pour décrémenter le stock
+    // Update checkout function to decrement stock
     document.querySelector('.checkout-btn').addEventListener('click', function() {
         if (!hasStockIssue) {
             processCheckout();
@@ -176,24 +176,24 @@ function displayCart() {
     });
 }
 
-// Nouvelle fonction pour obtenir le stock d'un produit
+// New function to get product stock
 function getProductStock(productId) {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const product = products.find(p => p.id === productId);
     return product ? product.stock : 0;
 }
 
-// Nouvelle fonction pour décrémenter le stock lors du paiement
+// New function to decrement stock at checkout
 function processCheckout() {
-    // Récupération des produits
+    // Get products
     const products = JSON.parse(localStorage.getItem('products')) || [];
     let stockUpdated = false;
     
-    // Décrémenter le stock pour chaque article du panier
+    // Decrement stock for each cart item
     cartItems.forEach(cartItem => {
         const productIndex = products.findIndex(p => p.id === cartItem.id);
         if (productIndex !== -1) {
-            // S'assurer que le stock ne devient pas négatif
+            // Ensure stock doesn't become negative
             if (products[productIndex].stock >= cartItem.quantity) {
                 products[productIndex].stock -= cartItem.quantity;
                 stockUpdated = true;
@@ -201,27 +201,27 @@ function processCheckout() {
         }
     });
     
-    // Mettre à jour le localStorage si des stocks ont été modifiés
+    // Update localStorage if stocks have been modified
     if (stockUpdated) {
         localStorage.setItem('products', JSON.stringify(products));
     }
     
-    // Vider le panier
+    // Empty the cart
     cartItems = [];
     localStorage.setItem('cart', JSON.stringify([]));
     updateCartCount();
     
-    // Afficher un message de confirmation et rediriger
-    showToast("Commande traitée avec succès !", "success");
+    // Display confirmation message and redirect
+    showToast("Order processed successfully!", "success");
     
-    // Afficher un message de confirmation
+    // Display confirmation message
     const cartContent = document.getElementById('cart-content');
     cartContent.innerHTML = `
         <div class="checkout-success">
             <i class="fas fa-check-circle"></i>
-            <h2>Commande validée !</h2>
-            <p>Merci pour votre achat. Votre commande a été traitée avec succès.</p>
-            <a href="shopping.html" class="btn">Retour à la boutique</a>
+            <h2>Order confirmed!</h2>
+            <p>Thank you for your purchase. Your order has been processed successfully.</p>
+            <a href="shopping.html" class="btn">Return to shop</a>
         </div>
     `;
 }
@@ -235,7 +235,7 @@ function removeFromCart(productId) {
         
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
-        toastMessage.textContent = "Produit retiré du panier!";
+        toastMessage.textContent = "Product removed from cart!";
         toast.classList.add("active");
         setTimeout(() => {
             toast.classList.remove("active");
@@ -251,12 +251,12 @@ function updateQuantity(productId, action) {
     
     if (itemIndex !== -1) {
         if (action === 'increase') {
-            // Vérifier le stock disponible avant d'augmenter la quantité
+            // Check available stock before increasing quantity
             const productStock = getProductStock(productId);
             if (productStock > cartItems[itemIndex].quantity) {
                 cartItems[itemIndex].quantity += 1;
             } else {
-                showToast("Stock insuffisant pour ce produit", "error");
+                showToast("Insufficient stock for this product", "error");
                 return;
             }
         } else if (action === 'decrease' && cartItems[itemIndex].quantity > 1) {
@@ -269,7 +269,7 @@ function updateQuantity(productId, action) {
         
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
-        toastMessage.textContent = "Quantité mise à jour!";
+        toastMessage.textContent = "Quantity updated!";
         toast.classList.add("active");
         setTimeout(() => {
             toast.classList.remove("active");
@@ -297,7 +297,7 @@ function updateStorageFromCartItems() {
     localStorage.setItem('cart', JSON.stringify(simpleCart));
 }
 
-// Fonction pour afficher des messages toast
+// Function to display toast messages
 function showToast(message, type = 'success', duration = 3000) {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');

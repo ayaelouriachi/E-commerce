@@ -8,9 +8,9 @@ if (!localStorage.getItem('products')) {
 // Initialiser les catégories par défaut si nécessaire
 if (!localStorage.getItem('categories')) {
   const defaultCategories = [
-    { name: 'clothing', image: 'category1.png' },
-    { name: 'makeup', image: 'category3.png' },
-    { name: 'accessories', image: 'category2.png' }
+    { name: 'clothing', image: 'images/category1.png' },
+    { name: 'makeup', image: 'images/category3.png' },
+    { name: 'accessories', image: 'images/category2.png' }
   ];
   localStorage.setItem('categories', JSON.stringify(defaultCategories));
 }
@@ -105,9 +105,9 @@ function updateFilterButtons() {
   if (!filterContainer) return;
   
   const categories = JSON.parse(localStorage.getItem('categories')) || [
-    { name: 'clothing', image: 'category1.png' },
-    { name: 'makeup', image: 'category3.png' },
-    { name: 'accessories', image: 'category2.png' }
+    { name: 'clothing', image: 'images/category1.png' },
+    { name: 'makeup', image: 'images/category3.png' },
+    { name: 'accessories', image: 'images/category2.png' }
   ];
 
   // Garder le bouton "All" et ajouter les autres catégories
@@ -286,9 +286,9 @@ function updateCategoryCards() {
   if (!categoriesGrid) return;
 
   const categories = JSON.parse(localStorage.getItem('categories')) || [
-    { name: 'clothing', image: 'category1.png' },
-    { name: 'makeup', image: 'category3.png' },
-    { name: 'accessories', image: 'category2.png' }
+    { name: 'clothing', image: 'images/category1.png' },
+    { name: 'makeup', image: 'images/category3.png' },
+    { name: 'accessories', image: 'images/category2.png' }
   ];
 
   categoriesGrid.innerHTML = categories.map(category => `
@@ -323,9 +323,9 @@ function updateCategoryCards() {
 // Crée ou met à jour les sections de produits en vedette par catégorie
 function displayFeaturedSections() {
   const categories = JSON.parse(localStorage.getItem('categories')) || [
-    { name: 'clothing', image: 'category1.png' },
-    { name: 'makeup', image: 'category3.png' },
-    { name: 'accessories', image: 'category2.png' }
+    { name: 'clothing', image: 'images/category1.png' },
+    { name: 'makeup', image: 'images/category3.png' },
+    { name: 'accessories', image: 'images/category2.png' }
   ];
   
   // Créer un conteneur pour les sections en vedette si ce n'est pas déjà fait

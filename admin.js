@@ -489,9 +489,9 @@ let products = initProducts();
     
     // Get categories from localStorage or use default ones
     const defaultCategories = [
-      { name: 'clothing', image: 'category1.png' },
-      { name: 'makeup', image: 'category3.png' },
-      { name: 'accessories', image: 'category2.png' }
+      { name: 'clothing', image: 'images/category1.png' },
+      { name: 'makeup', image: 'images/category3.png' },
+      { name: 'accessories', image: 'images/category2.png' }
     ];
     let categories = JSON.parse(localStorage.getItem('categories')) || defaultCategories;
     
@@ -574,9 +574,9 @@ let products = initProducts();
 function updateCategoriesList() {
   const categoriesList = document.getElementById('categories-list');
   const defaultCategories = [
-    { name: 'clothing', image: 'category1.png' },
-    { name: 'makeup', image: 'category3.png' },
-    { name: 'accessories', image: 'category2.png' }
+    { name: 'clothing', image: 'images/category1.png' },
+    { name: 'makeup', image: 'images/category3.png' },
+    { name: 'accessories', image: 'images/category2.png' }
   ];
   const categories = JSON.parse(localStorage.getItem('categories')) || defaultCategories;
   
@@ -673,9 +673,9 @@ function updateCategoriesList() {
     
     // Obtenir les catégories depuis localStorage
     const defaultCategories = [
-      { name: 'clothing', image: 'category1.png' },
-      { name: 'makeup', image: 'category3.png' },
-      { name: 'accessories', image: 'category2.png' }
+      { name: 'clothing', image: 'images/category1.png' },
+      { name: 'makeup', image: 'images/category3.png' },
+      { name: 'accessories', image: 'images/category2.png' }
     ];
     let categories = JSON.parse(localStorage.getItem('categories')) || defaultCategories;
     
@@ -798,9 +798,9 @@ function updateCategoriesList() {
   // Mettre à jour les options de catégorie dans les formulaires
   function updateCategoryOptions() {
     const defaultCategories = [
-      { name: 'clothing', image: 'category1.png' },
-      { name: 'makeup', image: 'category3.png' },
-      { name: 'accessories', image: 'category2.png' }
+      { name: 'clothing', image: 'images/category1.png' },
+      { name: 'makeup', image: 'images/category3.png' },
+      { name: 'accessories', image: 'images/category2.png' }
     ];
     const categories = JSON.parse(localStorage.getItem('categories')) || defaultCategories;
     

@@ -118,8 +118,8 @@ function displayProductDetails() {
              <div class="stock-indicator ${productStock < 5 ? 'low-stock' : ''}">
         <i class="fas ${productStock > 0 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
         ${productStock > 0 
-          ? `<span>En stock (${productStock} disponible${productStock > 1 ? 's' : ''})</span>` 
-          : '<span>Rupture de stock</span>'}
+          ? `<span>In stock (${productStock} available${productStock > 1 ? 's' : ''})</span>` 
+          : '<span>Out of stock</span>'}
       </div>
             <div class="product-details-description">
                 ${product.description}
@@ -138,7 +138,8 @@ function displayProductDetails() {
             
             <div class="product-actions-large">
                 <button class="btn add-to-cart-detail" data-id="${product.id}" ${productStock === 0 ? 'disabled' : ''}>
-          ${productStock === 0 ? 'Indisponible' : cartItem ? 'Mettre à jour le panier' : 'Ajouter au panier'}
+                ${productStock === 0 ? 'unavailable' : cartItem ? 'Update cart' : 'Add to cart'}
+
         </button>
             </div>
         </div>
@@ -208,15 +209,15 @@ function displayProductDetails() {
             stockIndicator.innerHTML = `
                 <i class="fas ${productStock > 0 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
                 ${productStock > 0 
-                ? `<span>En stock (${productStock} disponible${productStock > 1 ? 's' : ''})</span>` 
-                : '<span>Rupture de stock</span>'}
+                ? `<span>In stock (${productStock} available${productStock > 1 ? 's' : ''})</span>` 
+                : '<span>out of stock</span>'}
             `;
         }
         
         // Désactiver le bouton si plus de stock
         if (productStock === 0) {
             this.disabled = true;
-            this.textContent = 'Indisponible';
+            this.textContent = 'unvailable';
         }
     });
 }
@@ -280,7 +281,7 @@ function displayRelatedProducts(currentProduct) {
                 <img src="${product.image}" alt="${product.title}">
                  ${productStock < 5 ? 
           `<span class="stock-badge ${productStock === 0 ? 'out-of-stock' : 'low-stock'}">
-            ${productStock === 0 ? 'Rupture' : 'Stock limité'}
+           ${productStock === 0 ? 'Out of stock' : 'Limited stock'}
           </span>` : ''}
             </div>
             <div class="product-info">
@@ -291,9 +292,9 @@ function displayRelatedProducts(currentProduct) {
                  <div class="product-actions">
           <button class="btn btn-sm ${cartItem ? 'btn-update' : 'add-to-cart'}" 
             data-id="${product.id}" ${productStock === 0 ? 'disabled' : ''}>
-            ${productStock === 0 ? 'Indisponible' : cartItem ? `Dans le panier (${cartItem.quantity})` : 'Ajouter au panier'}
+            ${productStock === 0 ? 'unvailable' : cartItem ? `In cart (${cartItem.quantity})` : 'Add to cart'}
           </button>
-          <button class="btn-secondary btn-sm view-details" data-id="${product.id}">Voir détails</button>
+          <button class="btn-secondary btn-sm view-details" data-id="${product.id}">See details</button>
         </div>
             </div>
         `;
@@ -372,15 +373,15 @@ function showQuickview(productId) {
             <div class="stock-indicator ${productStock < 5 ? 'low-stock' : ''}">
         <i class="fas ${productStock > 0 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
         ${productStock > 0 
-          ? `<span>En stock (${productStock} disponible${productStock > 1 ? 's' : ''})</span>` 
-          : '<span>Rupture de stock</span>'}
+          ? `<span>In stock (${productStock} available${productStock > 1 ? 's' : ''})</span>` 
+          : '<span>Out of stock</span>'}
       </div>
             <div class="quickview-description">
                 ${product.description}
             </div>
             <div class="quickview-actions">
         <button class="btn add-to-cart-quickview" data-id="${product.id}" ${productStock === 0 ? 'disabled' : ''}>
-          ${productStock === 0 ? 'Indisponible' : cartItem ? `Dans le panier (${cartItem.quantity})` : 'Ajouter au panier'}
+          ${productStock === 0 ? 'unavailable' : cartItem ? `In cart (${cartItem.quantity})` : 'Add to cart'}
         </button>
         <a href="productDetails.html?id=${product.id}" class="btn-secondary" style="text-decoration: none; font-weight: bold;">Voir détails</a>
       </div>
